@@ -402,6 +402,49 @@
             line-height: 1.3;
         }
 
+        /* Config list collapsible */
+        .config-list {
+            border: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            background: var(--win98-light);
+        }
+
+        .config-list-header {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            background: var(--win98-gray);
+            border-bottom: 1px solid var(--win98-dark);
+            user-select: none;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-list-header::-webkit-details-marker {
+            display: none;
+        }
+
+        .config-list-header::before {
+            content: '▶';
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        .config-list[open] > .config-list-header::before {
+            transform: rotate(90deg);
+        }
+
+        .config-list-header:hover {
+            background: #d4d4d4;
+        }
+
+        .config-list-items {
+            padding: 8px;
+        }
+
         /* Status indicator dot */
         .dot {
             display: inline-block;
@@ -534,7 +577,6 @@
                 justify-content: center;
                 min-width: 0;
             }
-            .toolbar-btn .tb-label { display: none; }
 
             .marquee-wrap { font-size: 13px; padding: 5px 0; }
 
@@ -576,7 +618,6 @@
 
         @media (max-width: 340px) {
             .title-bar-text { font-size: 11px; }
-            .toolbar-btn .tb-label { display: none; }
             .btn-grid .wbtn { font-size: 12px; padding: 10px 6px; }
         }
 
@@ -727,7 +768,7 @@
                     </span>
 
                     <span class="info-label">Last Online</span>
-                    <span class="info-val">
+                    <span class="info-val" id="lastOnlineVal">
                         {{ if eq .lastOnline 0 }}NEVER{{ else }}{{ .lastOnline }}{{ end }}
                     </span>
 
@@ -749,15 +790,20 @@
                 </div>
 
                 {{ if .links }}
-                    {{ range .links }}
-                    <div class="link-card" onclick="copyToClipboard('{{ . }}')">
-                        <div class="w98-icon icon-globe" style="width:28px;height:28px;background-size:28px 28px;"></div>
-                        <div class="link-text">
-                            <div class="link-title">Click to copy configuration</div>
-                            <div class="link-url">{{ . }}</div>
+                <details class="config-list">
+                    <summary class="config-list-header">Show Configurations ({{ len .links }})</summary>
+                    <div class="config-list-items">
+                        {{ range .links }}
+                        <div class="link-card" onclick="copyToClipboard('{{ . }}')">
+                            <div class="w98-icon icon-globe" style="width:28px;height:28px;background-size:28px 28px;"></div>
+                            <div class="link-text">
+                                <div class="link-title">Loading...</div>
+                                <div class="link-url">{{ . }}</div>
+                            </div>
                         </div>
+                        {{ end }}
                     </div>
-                    {{ end }}
+                </details>
                 {{ else }}
                     <div class="wfield" style="text-align:center; padding:20px;">
                         <div class="w98-icon icon-help" style="margin:0 auto 8px;"></div>
@@ -852,6 +898,60 @@
         function showAbout() { document.getElementById('aboutModal').classList.add('open'); }
         function hideAbout() { document.getElementById('aboutModal').classList.remove('open'); }
         document.getElementById('aboutModal').addEventListener('click', function(e) { if (e.target === this) hideAbout(); });
+
+        /* Extract config names from URLs */
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.link-card').forEach(function(card) {
+                var titleEl = card.querySelector('.link-title');
+                var urlEl = card.querySelector('.link-url');
+                if (titleEl && urlEl) {
+                    var url = urlEl.textContent.trim();
+                    var hashIndex = url.indexOf('#');
+                    if (hashIndex !== -1 && hashIndex < url.length - 1) {
+                        titleEl.textContent = decodeURIComponent(url.substring(hashIndex + 1));
+                    } else {
+                        titleEl.textContent = 'Configuration';
+                    }
+                }
+            });
+
+            /* Convert last online to Jalali */
+            var el = document.getElementById('lastOnlineVal');
+            if (el && el.textContent.trim() !== 'NEVER') {
+                var ts = parseInt(el.textContent.trim(), 10);
+                if (ts > 0) {
+                    var d = new Date(ts > 1e12 ? ts : ts * 1000);
+                    el.textContent = toJalali(d);
+                }
+            }
+        });
+
+        /* Gregorian to Jalali converter */
+        function toJalali(gDate) {
+            var gd = gDate.getDate(), gm = gDate.getMonth() + 1, gy = gDate.getFullYear();
+            var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            var gy2 = (gm > 2) ? (gy + 1) : gy;
+            var days = 355666 + (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+            var jy = -1595 + (33 * Math.floor(days / 12053));
+            days %= 12053;
+            jy += 4 * Math.floor(days / 1461);
+            days %= 1461;
+            if (days > 365) {
+                jy += Math.floor((days - 1) / 365);
+                days = (days - 1) % 365;
+            }
+            var jm, jd;
+            if (days < 186) {
+                jm = 1 + Math.floor(days / 31);
+                jd = 1 + (days % 31);
+            } else {
+                jm = 7 + Math.floor((days - 186) / 30);
+                jd = 1 + ((days - 186) % 30);
+            }
+            var h = gDate.getHours(), m = gDate.getMinutes();
+            return jy + '/' + pad(jm) + '/' + pad(jd) + ' ' + pad(h) + ':' + pad(m);
+        }
+        function pad(n) { return n < 10 ? '0' + n : n; }
 
         /* Konami code easter egg */
         var kc = [], seq = [38,38,40,40,37,39,37,39,66,65];

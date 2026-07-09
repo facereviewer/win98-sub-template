@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .subTitle }} - Network Connections</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, Geneva, sans-serif;
+            font-size: 11px;
+            background-color: #008080;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23008080'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23009090'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23009090'/%3E%3C/svg%3E");
+            min-height: 100vh;
+            padding: 20px;
+            color: #000;
+        }
+
+        /* Windows 98 Window Frame */
+        .win98-window {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            box-shadow: 1px 1px 0 #000;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .title-bar-text {
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .title-bar-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-controls button {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            font-size: 9px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .title-bar-controls button:active {
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background: #c0c0c0;
+            padding: 2px 0;
+            border-bottom: 1px solid #808080;
+            display: flex;
+            gap: 2px;
+        }
+
+        .menu-item {
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: #fff;
+        }
+
+        /* Window Content */
+        .window-content {
+            padding: 10px;
+            background: #c0c0c0;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #c0c0c0;
+            border-top: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        .status-bar-section {
+            border: 1px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 2px 5px;
+            margin-right: 2px;
+        }
+
+        /* Windows 98 Elements */
+        .win98-fieldset {
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 10px;
+            margin: 10px 0;
+            background: #c0c0c0;
+        }
+
+        .win98-fieldset legend {
+            padding: 0 5px;
+            font-weight: bold;
+        }
+
+        .win98-input {
+            background: #fff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 3px 5px;
+            font-family: inherit;
+            font-size: 11px;
+            width: 100%;
+        }
+
+        .win98-button {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 4px 12px;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+            min-width: 75px;
+        }
+
+        .win98-button:active {
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 5px 11px 3px 13px;
+        }
+
+        .win98-button:focus {
+            outline: 1px dotted #000;
+            outline-offset: -4px;
+        }
+
+        /* Progress Bar (Win98 style) */
+        .progress-container {
+            background: #fff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            height: 16px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #000080 0px,
+                #000080 10px,
+                #000 10px,
+                #000 11px
+            );
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+            mix-blend-mode: difference;
+            color: #fff;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 5px 10px;
+            font-size: 11px;
+        }
+
+        .info-label {
+            font-weight: normal;
+            text-align: right;
+        }
+
+        .info-value {
+            background: #fff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 2px 5px;
+        }
+
+        /* Links Section */
+        .links-section {
+            margin-top: 10px;
+        }
+
+        .link-item {
+            background: #fff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 8px;
+            margin: 5px 0;
+            word-break: break-all;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .link-item:hover {
+            background: #e0e0e0;
+        }
+
+        .link-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #c0c0c0;
+            border-bottom: 1px solid #808080;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 5px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+        }
+
+        .toolbar-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .toolbar-btn:active {
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        .toolbar-btn img {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Desktop Icons Style */
+        .desktop-icon {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            text-align: center;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            width: 75px;
+        }
+
+        .desktop-icon:hover {
+            background: rgba(0, 0, 128, 0.5);
+        }
+
+        .desktop-icon img {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 5px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 15px;
+        }
+
+        /* Pixel Art Icons */
+        .pixel-icon {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Tabs */
+        .tab-bar {
+            display: flex;
+            border-bottom: 2px solid #808080;
+            margin-bottom: 10px;
+        }
+
+        .tab {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            border-bottom: none;
+            padding: 5px 15px;
+            margin-right: 2px;
+            cursor: pointer;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab.active {
+            background: #c0c0c0;
+            padding-bottom: 7px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .win98-window {
+                margin: 0 0 15px;
+            }
+
+            .title-bar-text {
+                font-size: 11px;
+            }
+
+            .info-grid {
+                grid-template-columns: 80px 1fr;
+                gap: 3px 5px;
+            }
+
+            .toolbar {
+                justify-content: center;
+            }
+
+            .toolbar-btn span {
+                display: none;
+            }
+
+            .desktop-icons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-label {
+                text-align: left;
+                font-weight: bold;
+            }
+
+            .title-bar-controls button {
+                width: 14px;
+                height: 12px;
+            }
+        }
+
+        /* Blinking cursor animation */
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+
+        /* CRT scanline effect */
+        .crt-effect {
+            position: relative;
+        }
+
+        .crt-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* Marquee for nostalgic feel */
+        .marquee-container {
+            overflow: hidden;
+            background: #000;
+            color: #0f0;
+            padding: 3px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Traffic light indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+            border: 1px solid #000;
+        }
+
+        .status-active { background: #00ff00; }
+        .status-inactive { background: #ff0000; }
+        .status-warning { background: #ffff00; }
+    </style>
+</head>
+<body>
+    <!-- Desktop Area -->
+    <div class="desktop-icons" style="display: flex; flex-wrap: wrap; margin-bottom: 20px;">
+        <div class="desktop-icon" onclick="showAbout()">
+            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
+                <rect x="2" y="2" width="12" height="12" fill="#000080"/>
+                <rect x="3" y="3" width="10" height="10" fill="#0000aa"/>
+                <text x="8" y="11" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial">W</text>
+            </svg>
+            <span style="font-size: 11px;">My PC</span>
+        </div>
+        <div class="desktop-icon" onclick="window.open('{{ .subJsonUrl }}', '_blank')">
+            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
+                <rect x="1" y="3" width="14" height="10" fill="#808080"/>
+                <rect x="2" y="4" width="12" height="8" fill="#000"/>
+                <rect x="3" y="5" width="10" height="6" fill="#000080"/>
+                <text x="8" y="9" text-anchor="middle" fill="#0f0" font-size="5" font-family="Courier">JSON</text>
+            </svg>
+            <span style="font-size: 11px;">JSON Config</span>
+        </div>
+        <div class="desktop-icon" onclick="window.open('{{ .subClashUrl }}', '_blank')">
+            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
+                <rect x="1" y="3" width="14" height="10" fill="#808080"/>
+                <rect x="2" y="4" width="12" height="8" fill="#000"/>
+                <rect x="3" y="5" width="10" height="6" fill="#800000"/>
+                <text x="8" y="9" text-anchor="middle" fill="#fff" font-size="4" font-family="Courier">CLASH</text>
+            </svg>
+            <span style="font-size: 11px;">Clash Config</span>
+        </div>
+        {{ if .subSupportUrl }}
+        <div class="desktop-icon" onclick="window.open('{{ .subSupportUrl }}', '_blank')">
+            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
+                <circle cx="8" cy="8" r="6" fill="#ffff00"/>
+                <circle cx="8" cy="8" r="5" fill="#ffff80"/>
+                <text x="8" y="11" text-anchor="middle" fill="#000" font-size="10" font-weight="bold" font-family="Arial">?</text>
+            </svg>
+            <span style="font-size: 11px;">Support</span>
+        </div>
+        {{ end }}
+    </div>
+
+    <!-- Main Window -->
+    <div class="win98-window crt-effect">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <span class="title-bar-text">
+                <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16">
+                    <rect x="1" y="1" width="14" height="14" fill="#000080"/>
+                    <rect x="2" y="2" width="12" height="12" fill="#0000aa"/>
+                    <path d="M4 8 L8 4 L12 8 L8 12 Z" fill="#fff"/>
+                </svg>
+                {{ .subTitle }} - Network Status
+            </span>
+            <div class="title-bar-controls">
+                <button title="Minimize">_</button>
+                <button title="Maximize">□</button>
+                <button title="Close" onclick="if(confirm('Are you sure you want to disconnect?')) window.close()">X</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <span class="menu-item"><u>F</u>ile</span>
+            <span class="menu-item"><u>E</u>dit</span>
+            <span class="menu-item"><u>V</u>iew</span>
+            <span class="menu-item"><u>H</u>elp</span>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-btn" onclick="copyToClipboard('{{ .subUrl }}')">
+                <svg viewBox="0 0 16 16" width="16" height="16">
+                    <rect x="3" y="3" width="10" height="10" fill="#c0c0c0" stroke="#000"/>
+                    <rect x="5" y="5" width="6" height="6" fill="#fff"/>
+                </svg>
+                <span>Copy Sub URL</span>
+            </div>
+            <div class="toolbar-btn" onclick="window.open('{{ .subJsonUrl }}', '_blank')">
+                <svg viewBox="0 0 16 16" width="16" height="16">
+                    <rect x="2" y="2" width="12" height="12" fill="#000080"/>
+                    <text x="8" y="11" text-anchor="middle" fill="#fff" font-size="7" font-weight="bold">{}</text>
+                </svg>
+                <span>JSON</span>
+            </div>
+            <div class="toolbar-btn" onclick="window.open('{{ .subClashUrl }}', '_blank')">
+                <svg viewBox="0 0 16 16" width="16" height="16">
+                    <rect x="2" y="2" width="12" height="12" fill="#800000"/>
+                    <text x="8" y="11" text-anchor="middle" fill="#fff" font-size="6" font-weight="bold">C</text>
+                </svg>
+                <span>Clash</span>
+            </div>
+        </div>
+
+        <!-- Marquee -->
+        <div class="marquee-container">
+            <span class="marquee-text">
+                *** WELCOME TO {{ .subTitle }} *** 
+                STATUS: {{ if .enabled }}CONNECTED{{ else }}DISCONNECTED{{ end }} *** 
+                REMAINING DATA: {{ .remained }} *** 
+                EXPIRES: {{ if eq .expire 0 }}NEVER{{ else }}{{ .expire }}{{ end }} *** 
+                YOUR ADVENTURE ON THE INFORMATION SUPERHIGHWAY AWAITS! ***
+            </span>
+        </div>
+
+        <!-- Content -->
+        <div class="window-content">
+            <!-- Connection Status -->
+            <div class="win98-fieldset">
+                <legend>Connection Status</legend>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <span class="status-indicator {{ if .enabled }}status-active{{ else }}status-inactive{{ end }}"></span>
+                    <span style="font-weight: bold;">
+                        {{ if .enabled }}
+                            STATUS: CONNECTED - Your modem is ready!
+                        {{ else }}
+                            STATUS: DISCONNECTED - Please check your settings
+                        {{ end }}
+                    </span>
+                </div>
+                <div style="font-size: 11px;">
+                    <strong>Subscription ID:</strong> {{ .sId }}
+                </div>
+            </div>
+
+            <!-- Traffic Statistics -->
+            <div class="win98-fieldset">
+                <legend>Traffic Statistics</legend>
+                
+                <div class="info-grid">
+                    <span class="info-label">Downloaded:</span>
+                    <span class="info-value">{{ .download }}</span>
+                    
+                    <span class="info-label">Uploaded:</span>
+                    <span class="info-value">{{ .upload }}</span>
+                    
+                    <span class="info-label">Total Used:</span>
+                    <span class="info-value">{{ .used }}</span>
+                    
+                    <span class="info-label">Total Limit:</span>
+                    <span class="info-value">{{ .total }}</span>
+                    
+                    <span class="info-label">Remaining:</span>
+                    <span class="info-value" style="font-weight: bold; color: #000080;">{{ .remained }}</span>
+                </div>
+
+                <!-- Usage Progress Bar -->
+                <div style="margin-top: 15px;">
+                    <div style="margin-bottom: 5px;"><strong>Data Usage:</strong></div>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                    <script>
+                        (function() {
+                            var download = {{ .downloadByte }};
+                            var upload = {{ .uploadByte }};
+                            var total = {{ .totalByte }};
+                            var used = download + upload;
+                            var percent = 0;
+                            if (total > 0) {
+                                percent = Math.min(100, Math.round((used * 100) / total));
+                            }
+                            document.getElementById('progressBar').style.width = percent + '%';
+                            document.getElementById('progressText').textContent = percent + '%';
+                        })();
+                    </script>
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="win98-fieldset">
+                <legend>Account Information</legend>
+                <div class="info-grid">
+                    <span class="info-label">Expires:</span>
+                    <span class="info-value">
+                        {{ if eq .expire 0 }}
+                            NEVER (Unlimited Time!)
+                        {{ else }}
+                            {{ .expire }}
+                        {{ end }}
+                    </span>
+                    
+                    <span class="info-label">Last Online:</span>
+                    <span class="info-value">
+                        {{ if eq .lastOnline 0 }}
+                            NEVER (First Connection?)
+                        {{ else }}
+                            {{ .lastOnline }}
+                        {{ end }}
+                    </span>
+                    
+                    {{ if .emails }}
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ index .emails 0 }}</span>
+                    {{ end }}
+                </div>
+            </div>
+
+            <!-- Subscription Links -->
+            <div class="win98-fieldset">
+                <legend>Subscription Links</legend>
+                
+                <div style="margin-bottom: 10px;">
+                    <button class="win98-button" onclick="copyToClipboard('{{ .subUrl }}')">
+                        📋 Copy Subscription URL
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <strong>Available Configurations:</strong>
+                </div>
+
+                {{ if .links }}
+                    {{ range .links }}
+                    <div class="link-item" onclick="copyToClipboard('{{ . }}')">
+                        <svg class="link-icon pixel-icon" viewBox="0 0 32 32">
+                            <rect x="2" y="2" width="28" height="28" fill="#000080"/>
+                            <rect x="4" y="4" width="24" height="24" fill="#0000aa"/>
+                            <path d="M8 16 L16 8 L24 16 L16 24 Z" fill="#fff"/>
+                            <circle cx="16" cy="16" r="3" fill="#000080"/>
+                        </svg>
+                        <div style="overflow: hidden; text-overflow: ellipsis;">
+                            <div style="font-weight: bold; margin-bottom: 3px;">Click to Copy</div>
+                            <div style="color: #666; font-size: 10px; word-break: break-all;">{{ . }}</div>
+                        </div>
+                    </div>
+                    {{ end }}
+                {{ else }}
+                    <div style="padding: 20px; text-align: center; background: #fff; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080;">
+                        <svg viewBox="0 0 32 32" width="32" height="32" style="margin: 0 auto 10px;">
+                            <circle cx="16" cy="16" r="14" fill="#ffff00"/>
+                            <circle cx="16" cy="16" r="13" fill="#ffff80"/>
+                            <text x="16" y="22" text-anchor="middle" fill="#000" font-size="18" font-weight="bold">!</text>
+                        </svg>
+                        <div>No configurations available</div>
+                    </div>
+                {{ end }}
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="win98-fieldset">
+                <legend>Quick Actions</legend>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button class="win98-button" onclick="copyToClipboard('{{ .subUrl }}')">
+                        📋 Copy Sub URL
+                    </button>
+                    <button class="win98-button" onclick="window.open('{{ .subJsonUrl }}', '_blank')">
+                        📄 Download JSON
+                    </button>
+                    <button class="win98-button" onclick="window.open('{{ .subClashUrl }}', '_blank')">
+                        ⚔️ Download Clash
+                    </button>
+                    {{ if .subSupportUrl }}
+                    <button class="win98-button" onclick="window.open('{{ .subSupportUrl }}', '_blank')">
+                        ❓ Get Support
+                    </button>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar" style="display: flex; flex-wrap: wrap;">
+            <span class="status-bar-section" style="flex: 1; min-width: 150px;">
+                {{ if .enabled }}✓ Connected{{ else }}✗ Disconnected{{ end }}
+            </span>
+            <span class="status-bar-section" style="flex: 1; min-width: 120px;">
+                Data: {{ .remained }} left
+            </span>
+            <span class="status-bar-section" style="flex: 1; min-width: 100px;">
+                {{ .datepicker }}
+            </span>
+        </div>
+    </div>
+
+    <!-- About Dialog -->
+    <div class="modal-overlay" id="aboutModal">
+        <div class="modal">
+            <div class="title-bar">
+                <span class="title-bar-text">
+                    <svg class="title-bar-icon" viewBox="0 0 16 16" width="16" height="16">
+                        <circle cx="8" cy="8" r="7" fill="#000080"/>
+                        <text x="8" y="12" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">i</text>
+                    </svg>
+                    About
+                </span>
+                <div class="title-bar-controls">
+                    <button onclick="hideAbout()">X</button>
+                </div>
+            </div>
+            <div class="modal-content">
+                <svg viewBox="0 0 64 64" width="64" height="64" style="margin: 0 auto 15px;">
+                    <rect x="4" y="4" width="56" height="56" fill="#000080" rx="4"/>
+                    <rect x="8" y="8" width="48" height="48" fill="#0000aa" rx="2"/>
+                    <path d="M16 32 L32 16 L48 32 L32 48 Z" fill="#fff"/>
+                    <circle cx="32" cy="32" r="8" fill="#000080"/>
+                    <circle cx="32" cy="32" r="4" fill="#fff"/>
+                </svg>
+                <h3 style="margin-bottom: 10px;">{{ .subTitle }}</h3>
+                <p style="margin-bottom: 5px;">Windows 98 Network Status</p>
+                <p style="margin-bottom: 15px; color: #666;">Version 4.10.1998</p>
+                <p style="font-size: 10px; color: #888; margin-bottom: 15px;">
+                    "Where do you want to go today?"
+                </p>
+                <button class="win98-button" onclick="hideAbout()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('Copied to clipboard!');
+                });
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showNotification('Copied to clipboard!');
+            }
+        }
+
+        function showNotification(message) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #c0c0c0;
+                border: 2px solid;
+                border-color: #ffffff #808080 #808080 #ffffff;
+                padding: 15px 20px;
+                z-index: 2000;
+                box-shadow: 2px 2px 0 #000;
+            `;
+            notif.innerHTML = `
+                <div class="title-bar" style="margin: -15px -20px 10px -20px;">
+                    <span class="title-bar-text" style="font-size: 11px;">Notification</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg viewBox="0 0 16 16" width="16" height="16">
+                        <circle cx="8" cy="8" r="7" fill="#00ff00"/>
+                        <path d="M4 8 L7 11 L12 5" stroke="#000" stroke-width="2" fill="none"/>
+                    </svg>
+                    ${message}
+                </div>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
+        }
+
+        function showAbout() {
+            document.getElementById('aboutModal').classList.add('active');
+        }
+
+        function hideAbout() {
+            document.getElementById('aboutModal').classList.remove('active');
+        }
+
+        // Close modal on outside click
+        document.getElementById('aboutModal').addEventListener('click', function(e) {
+            if (e.target === this) hideAbout();
+        });
+
+        // Add keyboard shortcut for Easter egg
+        let konamiCode = [];
+        const secretCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.keyCode);
+            konamiCode = konamiCode.slice(-10);
+            
+            if (JSON.stringify(konamiCode) === JSON.stringify(secretCode)) {
+                document.body.style.animation = 'none';
+                showNotification('🎮 KONAMI CODE ACTIVATED! +30 LIVES!');
+                // Easter egg: add some flair
+                document.querySelectorAll('.win98-window').forEach(w => {
+                    w.style.transform = 'rotate(2deg)';
+                    setTimeout(() => w.style.transform = '', 500);
+                });
+            }
+        });
+
+        // Classic Windows startup sound simulation (visual)
+        window.addEventListener('load', function() {
+            const bootScreen = document.createElement('div');
+            bootScreen.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                font-family: 'MS Sans Serif', sans-serif;
+            `;
+            bootScreen.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 20px; color: #0000ff;">Windows 98</div>
+                    <div style="font-size: 12px; margin-bottom: 30px;">Microsoft Internet Explorer</div>
+                    <div style="width: 200px; height: 16px; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080;">
+                        <div style="height: 100%; background: repeating-linear-gradient(90deg, #000080 0px, #000080 10px, #000 10px, #000 11px); width: 0%; animation: boot 2s forwards;"></div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 10px;">Loading network connections...</div>
+                </div>
+            `;
+            document.body.appendChild(bootScreen);
+            
+            // Add boot animation
+            const style = document.createElement('style');
+            style.textContent = '@keyframes boot { to { width: 100%; } }';
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                bootScreen.style.opacity = '0';
+                bootScreen.style.transition = 'opacity 0.5s';
+                setTimeout(() => bootScreen.remove(), 500);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

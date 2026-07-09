@@ -2,38 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ .subTitle }} - Network Connections</title>
     <style>
+        @font-face {
+            font-family: 'W98FA';
+            src: url('https://cdn.jsdelivr.net/gh/nickvdp/win98-font@main/W98FA.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --win98-gray: #c0c0c0;
+            --win98-dark: #808080;
+            --win98-light: #ffffff;
+            --win98-black: #000000;
+            --win98-blue: #000080;
+            --win98-title-blue: #0000aa;
+            --win98-teal: #008080;
+            --win98-btn-border: #dfdfdf;
+            --font-main: 'W98FA', 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, Geneva, sans-serif;
         }
 
         body {
-            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, Geneva, sans-serif;
-            font-size: 11px;
-            background-color: #008080;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23008080'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23009090'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23009090'/%3E%3C/svg%3E");
+            font-family: var(--font-main);
+            font-size: 12px;
+            background-color: var(--win98-teal);
             min-height: 100vh;
-            padding: 20px;
-            color: #000;
+            padding: 8px;
+            color: var(--win98-black);
+            line-height: 1.4;
         }
 
-        /* Windows 98 Window Frame */
+        /* ── Win98 pixel-art icon sprites (pure CSS) ── */
+        .w98-icon {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            flex-shrink: 0;
+            position: relative;
+            background-size: 32px 32px;
+        }
+        .w98-icon-16 {
+            width: 16px;
+            height: 16px;
+            background-size: 16px 16px;
+        }
+
+        /* My Computer icon */
+        .icon-mycomputer {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='3' width='24' height='17' rx='1' fill='%23808080'/%3E%3Crect x='5' y='4' width='22' height='15' rx='0' fill='%23000080'/%3E%3Crect x='7' y='6' width='18' height='11' fill='%230000aa'/%3E%3Crect x='9' y='13' width='14' height='4' fill='%2300aaff' opacity='0.15'/%3E%3Crect x='11' y='20' width='10' height='3' fill='%23c0c0c0'/%3E%3Crect x='8' y='23' width='16' height='3' rx='1' fill='%23808080'/%3E%3Crect x='9' y='24' width='14' height='1' fill='%23c0c0c0'/%3E%3Crect x='8' y='8' width='3' height='2' fill='%2300ff00'/%3E%3Crect x='12' y='8' width='8' height='2' fill='%2300ff00' opacity='0.5'/%3E%3C/svg%3E");
+        }
+
+        /* Globe / Network icon */
+        .icon-globe {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%230000aa'/%3E%3Ccircle cx='16' cy='16' r='11' fill='%230000cc'/%3E%3Cellipse cx='16' cy='16' rx='5' ry='11' fill='none' stroke='%2300aaff' stroke-width='1'/%3E%3Cline x1='4' y1='12' x2='28' y2='12' stroke='%2300aaff' stroke-width='1'/%3E%3Cline x1='4' y1='20' x2='28' y2='20' stroke='%2300aaff' stroke-width='1'/%3E%3Cline x1='16' y1='4' x2='16' y2='28' stroke='%2300aaff' stroke-width='1'/%3E%3Ccircle cx='16' cy='16' r='12' fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.3'/%3E%3C/svg%3E");
+        }
+
+        /* Notepad / Config file icon */
+        .icon-notepad {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='2' width='20' height='26' fill='%23ffffff'/%3E%3Crect x='6' y='2' width='20' height='26' fill='none' stroke='%23000000' stroke-width='1'/%3E%3Crect x='8' y='2' width='2' height='26' fill='%230000aa' opacity='0.15'/%3E%3Cline x1='12' y1='7' x2='23' y2='7' stroke='%23000' stroke-width='1'/%3E%3Cline x1='12' y1='10' x2='23' y2='10' stroke='%23000' stroke-width='1'/%3E%3Cline x1='12' y1='13' x2='20' y2='13' stroke='%23000' stroke-width='1'/%3E%3Cline x1='12' y1='16' x2='22' y2='16' stroke='%23000' stroke-width='1'/%3E%3Cline x1='12' y1='19' x2='18' y2='19' stroke='%23000' stroke-width='1'/%3E%3Crect x='8' y='4' width='16' height='2' fill='%23ffff00'/%3E%3Crect x='9' y='5' width='1' height='14' fill='%23ff0000' opacity='0.3'/%3E%3C/svg%3E");
+        }
+
+        /* Shield / Clash icon */
+        .icon-shield {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L28 7 L28 16 C28 23 22 28 16 30 C10 28 4 23 4 16 L4 7 Z' fill='%230000aa'/%3E%3Cpath d='M16 4 L26 8 L26 16 C26 22 21 27 16 29 C11 27 6 22 6 16 L6 8 Z' fill='%230000cc'/%3E%3Cpath d='M16 7 L13 14 L10 14 L12 18 L11 25 L16 22 L21 25 L20 18 L22 14 L19 14 Z' fill='%23ffffff' opacity='0.9'/%3E%3C/svg%3E");
+        }
+
+        /* Help / Support icon */
+        .icon-help {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23ffff00'/%3E%3Ccircle cx='16' cy='16' r='12' fill='%23ffff80'/%3E%3Ccircle cx='16' cy='16' r='12' fill='none' stroke='%23000000' stroke-width='1'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%23000080' font-size='18' font-weight='bold' font-family='serif'%3E?%3C/text%3E%3C/svg%3E");
+        }
+
+        /* Folder icon */
+        .icon-folder {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 8 L2 26 L30 26 L30 10 L14 10 L12 8 Z' fill='%23ffff00'/%3E%3Cpath d='M2 10 L30 10 L30 26 L2 26 Z' fill='%23ffff80'/%3E%3Cpath d='M2 10 L30 10 L30 12 L2 12 Z' fill='%23ffffff' opacity='0.4'/%3E%3C/svg%3E");
+        }
+
+        /* Disk / Hard drive icon */
+        .icon-disk {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='8' width='26' height='16' rx='2' fill='%23808080'/%3E%3Crect x='4' y='9' width='24' height='14' rx='1' fill='%23c0c0c0'/%3E%3Crect x='6' y='11' width='12' height='10' fill='%23000080'/%3E%3Crect x='7' y='12' width='10' height='8' fill='%230000aa'/%3E%3Ccircle cx='24' cy='16' r='2' fill='%2300ff00'/%3E%3Crect x='6' y='26' width='20' height='2' fill='%23808080'/%3E%3C/svg%3E");
+        }
+
+        /* Windows 98 flag logo */
+        .icon-windows {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='12' height='12' fill='%23ff0000'/%3E%3Crect x='17' y='3' width='12' height='12' fill='%2300aa00'/%3E%3Crect x='3' y='17' width='12' height='12' fill='%230000ff'/%3E%3Crect x='17' y='17' width='12' height='12' fill='%23ffff00'/%3E%3Crect x='3' y='3' width='12' height='12' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Crect x='17' y='3' width='12' height='12' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Crect x='3' y='17' width='12' height='12' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3Crect x='17' y='17' width='12' height='12' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E");
+        }
+
+        /* ── Win98 Window Frame ── */
         .win98-window {
-            background: #c0c0c0;
+            background: var(--win98-gray);
             border: 2px solid;
-            border-color: #ffffff #808080 #808080 #ffffff;
-            box-shadow: 1px 1px 0 #000;
-            max-width: 600px;
-            margin: 0 auto 20px;
+            border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+            box-shadow: 1px 1px 0 var(--win98-black);
+            max-width: 640px;
+            margin: 0 auto 12px;
         }
 
         /* Title Bar */
         .title-bar {
-            background: linear-gradient(90deg, #000080, #1084d0);
+            background: linear-gradient(90deg, var(--win98-blue), #1084d0);
             padding: 3px 4px;
             display: flex;
             align-items: center;
@@ -42,513 +118,519 @@
         }
 
         .title-bar-text {
-            color: #fff;
+            color: var(--win98-light);
             font-weight: bold;
-            font-size: 12px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             gap: 5px;
-        }
-
-        .title-bar-icon {
-            width: 16px;
-            height: 16px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .title-bar-controls {
             display: flex;
             gap: 2px;
+            flex-shrink: 0;
         }
 
         .title-bar-controls button {
-            width: 16px;
-            height: 14px;
-            background: #c0c0c0;
+            width: 18px;
+            height: 16px;
+            background: var(--win98-gray);
             border: 2px solid;
-            border-color: #ffffff #808080 #808080 #ffffff;
-            font-size: 9px;
+            border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+            font-size: 10px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0;
+            font-family: var(--font-main);
         }
 
         .title-bar-controls button:active {
-            border-color: #808080 #ffffff #ffffff #808080;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
         }
 
         /* Menu Bar */
         .menu-bar {
-            background: #c0c0c0;
-            padding: 2px 0;
-            border-bottom: 1px solid #808080;
+            background: var(--win98-gray);
+            padding: 1px 0;
+            border-bottom: 1px solid var(--win98-dark);
             display: flex;
-            gap: 2px;
+            gap: 0;
         }
 
         .menu-item {
-            padding: 2px 8px;
+            padding: 3px 8px;
             cursor: pointer;
+            font-size: 12px;
         }
 
         .menu-item:hover {
-            background: #000080;
-            color: #fff;
-        }
-
-        /* Window Content */
-        .window-content {
-            padding: 10px;
-            background: #c0c0c0;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            background: #c0c0c0;
-            border-top: 2px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 4px 8px;
-            font-size: 11px;
-        }
-
-        .status-bar-section {
-            border: 1px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 2px 5px;
-            margin-right: 2px;
-        }
-
-        /* Windows 98 Elements */
-        .win98-fieldset {
-            border: 2px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 10px;
-            margin: 10px 0;
-            background: #c0c0c0;
-        }
-
-        .win98-fieldset legend {
-            padding: 0 5px;
-            font-weight: bold;
-        }
-
-        .win98-input {
-            background: #fff;
-            border: 2px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 3px 5px;
-            font-family: inherit;
-            font-size: 11px;
-            width: 100%;
-        }
-
-        .win98-button {
-            background: #c0c0c0;
-            border: 2px solid;
-            border-color: #ffffff #808080 #808080 #ffffff;
-            padding: 4px 12px;
-            font-family: inherit;
-            font-size: 11px;
-            cursor: pointer;
-            min-width: 75px;
-        }
-
-        .win98-button:active {
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 5px 11px 3px 13px;
-        }
-
-        .win98-button:focus {
-            outline: 1px dotted #000;
-            outline-offset: -4px;
-        }
-
-        /* Progress Bar (Win98 style) */
-        .progress-container {
-            background: #fff;
-            border: 2px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            height: 16px;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: repeating-linear-gradient(
-                90deg,
-                #000080 0px,
-                #000080 10px,
-                #000 10px,
-                #000 11px
-            );
-            transition: width 0.3s;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 10px;
-            font-weight: bold;
-            color: #000;
-            mix-blend-mode: difference;
-            color: #fff;
-        }
-
-        /* Info Grid */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 100px 1fr;
-            gap: 5px 10px;
-            font-size: 11px;
-        }
-
-        .info-label {
-            font-weight: normal;
-            text-align: right;
-        }
-
-        .info-value {
-            background: #fff;
-            border: 2px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 2px 5px;
-        }
-
-        /* Links Section */
-        .links-section {
-            margin-top: 10px;
-        }
-
-        .link-item {
-            background: #fff;
-            border: 2px solid;
-            border-color: #808080 #ffffff #ffffff #808080;
-            padding: 8px;
-            margin: 5px 0;
-            word-break: break-all;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .link-item:hover {
-            background: #e0e0e0;
-        }
-
-        .link-icon {
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
+            background: var(--win98-blue);
+            color: var(--win98-light);
         }
 
         /* Toolbar */
         .toolbar {
-            background: #c0c0c0;
-            border-bottom: 1px solid #808080;
-            padding: 5px;
+            background: var(--win98-gray);
+            border-bottom: 1px solid var(--win98-dark);
+            padding: 4px 6px;
             display: flex;
-            gap: 5px;
+            gap: 4px;
             flex-wrap: wrap;
         }
 
         .toolbar-btn {
-            background: #c0c0c0;
+            background: var(--win98-gray);
             border: 2px solid;
-            border-color: #ffffff #808080 #808080 #ffffff;
-            padding: 5px 10px;
+            border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+            padding: 4px 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 11px;
+            font-size: 12px;
+            font-family: var(--font-main);
+            white-space: nowrap;
         }
 
         .toolbar-btn:hover {
-            background: #d0d0d0;
+            background: #d4d4d4;
         }
 
         .toolbar-btn:active {
-            border-color: #808080 #ffffff #ffffff #808080;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 5px 7px 3px 9px;
         }
 
-        .toolbar-btn img {
-            width: 16px;
-            height: 16px;
-        }
-
-        /* Desktop Icons Style */
-        .desktop-icon {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px;
-            cursor: pointer;
-            text-align: center;
-            color: #fff;
-            text-shadow: 1px 1px 2px #000;
-            width: 75px;
-        }
-
-        .desktop-icon:hover {
-            background: rgba(0, 0, 128, 0.5);
-        }
-
-        .desktop-icon img {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 5px;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: #c0c0c0;
-            border: 2px solid;
-            border-color: #ffffff #808080 #808080 #ffffff;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .modal-content {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .modal-icon {
-            width: 32px;
-            height: 32px;
-            margin: 0 auto 15px;
-        }
-
-        /* Pixel Art Icons */
-        .pixel-icon {
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-        }
-
-        /* Tabs */
-        .tab-bar {
-            display: flex;
-            border-bottom: 2px solid #808080;
-            margin-bottom: 10px;
-        }
-
-        .tab {
-            background: #c0c0c0;
-            border: 2px solid;
-            border-color: #ffffff #808080 #808080 #ffffff;
-            border-bottom: none;
-            padding: 5px 15px;
-            margin-right: 2px;
-            cursor: pointer;
-            position: relative;
-            top: 2px;
-        }
-
-        .tab.active {
-            background: #c0c0c0;
-            padding-bottom: 7px;
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            body {
-                padding: 10px;
-            }
-
-            .win98-window {
-                margin: 0 0 15px;
-            }
-
-            .title-bar-text {
-                font-size: 11px;
-            }
-
-            .info-grid {
-                grid-template-columns: 80px 1fr;
-                gap: 3px 5px;
-            }
-
-            .toolbar {
-                justify-content: center;
-            }
-
-            .toolbar-btn span {
-                display: none;
-            }
-
-            .desktop-icons {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .info-label {
-                text-align: left;
-                font-weight: bold;
-            }
-
-            .title-bar-controls button {
-                width: 14px;
-                height: 12px;
-            }
-        }
-
-        /* Blinking cursor animation */
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        .cursor-blink {
-            animation: blink 1s infinite;
-        }
-
-        /* CRT scanline effect */
-        .crt-effect {
-            position: relative;
-        }
-
-        .crt-effect::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.1) 0px,
-                rgba(0, 0, 0, 0.1) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        /* Marquee for nostalgic feel */
-        .marquee-container {
+        /* Marquee ticker */
+        .marquee-wrap {
             overflow: hidden;
-            background: #000;
+            background: var(--win98-black);
             color: #0f0;
-            padding: 3px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
+            padding: 4px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
         }
 
-        .marquee-text {
+        .marquee-inner {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 15s linear infinite;
+            animation: scroll-left 20s linear infinite;
         }
 
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
+        @keyframes scroll-left {
+            0% { transform: translateX(100vw); }
             100% { transform: translateX(-100%); }
         }
 
-        /* Traffic light indicators */
-        .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-            border: 1px solid #000;
+        /* Window Content */
+        .window-content {
+            padding: 8px;
+            background: var(--win98-gray);
         }
 
-        .status-active { background: #00ff00; }
-        .status-inactive { background: #ff0000; }
-        .status-warning { background: #ffff00; }
+        /* Status Bar */
+        .status-bar {
+            background: var(--win98-gray);
+            border-top: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 3px 6px;
+            font-size: 11px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+        }
+
+        .status-section {
+            border: 1px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 2px 6px;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        /* Win98 fieldset / groupbox */
+        .wb {
+            border: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 12px 10px 10px;
+            margin: 8px 0;
+            background: var(--win98-gray);
+            position: relative;
+        }
+
+        .wb legend {
+            padding: 0 6px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Win98 button */
+        .wbtn {
+            background: var(--win98-gray);
+            border: 2px solid;
+            border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+            padding: 5px 14px;
+            font-family: var(--font-main);
+            font-size: 12px;
+            cursor: pointer;
+            min-width: 80px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .wbtn:active {
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 6px 13px 4px 15px;
+        }
+
+        .wbtn:focus-visible {
+            outline: 1px dotted var(--win98-black);
+            outline-offset: -4px;
+        }
+
+        /* Win98 inset box (input / read-only field) */
+        .wfield {
+            background: var(--win98-light);
+            border: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 3px 6px;
+            font-family: var(--font-main);
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        /* Info grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 6px 10px;
+            font-size: 12px;
+        }
+
+        .info-label {
+            text-align: right;
+            padding-top: 3px;
+            white-space: nowrap;
+        }
+
+        .info-val {
+            padding: 3px 6px;
+            background: var(--win98-light);
+            border: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            word-break: break-all;
+        }
+
+        /* Progress bar */
+        .prog-wrap {
+            background: var(--win98-light);
+            border: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            height: 18px;
+            position: relative;
+        }
+
+        .prog-fill {
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--win98-blue) 0px, var(--win98-blue) 10px,
+                var(--win98-black) 10px, var(--win98-black) 11px
+            );
+            transition: width 0.4s;
+        }
+
+        .prog-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--win98-light);
+            text-shadow: 1px 1px 0 var(--win98-black);
+            pointer-events: none;
+        }
+
+        /* Link items */
+        .link-card {
+            background: var(--win98-light);
+            border: 2px solid;
+            border-color: var(--win98-dark) var(--win98-light) var(--win98-light) var(--win98-dark);
+            padding: 10px;
+            margin: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .link-card:active {
+            background: #e0e0e0;
+        }
+
+        .link-card .link-text {
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .link-card .link-title {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .link-card .link-url {
+            color: #666;
+            font-size: 10px;
+            word-break: break-all;
+            line-height: 1.3;
+        }
+
+        /* Status indicator dot */
+        .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid var(--win98-black);
+            flex-shrink: 0;
+        }
+        .dot-on { background: radial-gradient(circle at 4px 4px, #00ff00, #008800); }
+        .dot-off { background: radial-gradient(circle at 4px 4px, #ff4444, #880000); }
+
+        /* Desktop icons bar */
+        .desktop-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+
+        .desk-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            min-width: 68px;
+            text-align: center;
+        }
+
+        .desk-icon:active {
+            border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+            background: rgba(0, 0, 128, 0.25);
+        }
+
+        .desk-icon-label {
+            font-size: 11px;
+            color: var(--win98-light);
+            text-shadow: 1px 1px 2px var(--win98-black);
+            word-break: break-word;
+        }
+
+        /* Button grid for mobile */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .btn-grid .wbtn {
+            min-width: 0;
+            width: 100%;
+            font-size: 11px;
+            padding: 8px 6px;
+        }
+
+        /* Modal */
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .modal-bg.open { display: flex; }
+
+        .modal-box {
+            background: var(--win98-gray);
+            border: 2px solid;
+            border-color: var(--win98-light) var(--win98-dark) var(--win98-dark) var(--win98-light);
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .modal-body {
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        /* CRT scanlines */
+        .crt {
+            position: relative;
+        }
+        .crt::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.06) 0px,
+                rgba(0,0,0,0.06) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Traffic light glow animation */
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 3px 1px rgba(0,255,0,0.4); }
+            50% { box-shadow: 0 0 6px 2px rgba(0,255,0,0.7); }
+        }
+        .dot-on { animation: glow-pulse 2s ease-in-out infinite; }
+
+        /* ═══════════════ RESPONSIVE ═══════════════ */
+        @media (max-width: 480px) {
+            body { padding: 4px; font-size: 13px; }
+
+            .win98-window { margin: 0 0 8px; }
+
+            .title-bar { padding: 4px 6px; }
+            .title-bar-text { font-size: 13px; }
+            .title-bar-controls button { width: 22px; height: 20px; font-size: 12px; }
+
+            .menu-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .menu-item { padding: 6px 12px; font-size: 13px; }
+
+            .toolbar { padding: 6px; }
+            .toolbar-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+                flex: 1;
+                justify-content: center;
+                min-width: 0;
+            }
+            .toolbar-btn .tb-label { display: none; }
+
+            .marquee-wrap { font-size: 13px; padding: 5px 0; }
+
+            .window-content { padding: 6px; }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .info-label {
+                text-align: left;
+                font-weight: bold;
+                padding-top: 6px;
+            }
+            .info-label::after { content: ':'; }
+
+            .wb { padding: 14px 8px 10px; margin: 6px 0; }
+
+            .btn-grid {
+                grid-template-columns: 1fr;
+            }
+            .btn-grid .wbtn {
+                padding: 12px 10px;
+                font-size: 13px;
+                min-height: 44px;
+            }
+
+            .link-card { padding: 12px; gap: 12px; }
+
+            .wbtn { min-height: 44px; }
+
+            .status-bar { font-size: 11px; }
+            .status-section { padding: 4px 6px; }
+
+            .desk-icon { padding: 8px 12px; min-width: 72px; }
+            .w98-icon { width: 40px; height: 40px; background-size: 40px 40px; }
+            .desk-icon-label { font-size: 12px; }
+        }
+
+        @media (max-width: 340px) {
+            .title-bar-text { font-size: 11px; }
+            .toolbar-btn .tb-label { display: none; }
+            .btn-grid .wbtn { font-size: 12px; padding: 10px 6px; }
+        }
+
+        /* Touch-friendly spacing for landscape phones */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body { padding: 2px; }
+            .desktop-bar { margin-bottom: 4px; }
+            .desk-icon { padding: 4px 8px; min-width: 56px; }
+            .w98-icon { width: 28px; height: 28px; background-size: 28px 28px; }
+            .wb { margin: 4px 0; padding: 8px 6px 6px; }
+        }
     </style>
 </head>
 <body>
-    <!-- Desktop Area -->
-    <div class="desktop-icons" style="display: flex; flex-wrap: wrap; margin-bottom: 20px;">
-        <div class="desktop-icon" onclick="showAbout()">
-            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
-                <rect x="2" y="2" width="12" height="12" fill="#000080"/>
-                <rect x="3" y="3" width="10" height="10" fill="#0000aa"/>
-                <text x="8" y="11" text-anchor="middle" fill="#fff" font-size="8" font-family="Arial">W</text>
-            </svg>
-            <span style="font-size: 11px;">My PC</span>
+    <!-- Desktop shortcut bar -->
+    <div class="desktop-bar">
+        <div class="desk-icon" onclick="showAbout()">
+            <div class="w98-icon icon-mycomputer"></div>
+            <span class="desk-icon-label">My Computer</span>
         </div>
-        <div class="desktop-icon" onclick="window.open('{{ .subJsonUrl }}', '_blank')">
-            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
-                <rect x="1" y="3" width="14" height="10" fill="#808080"/>
-                <rect x="2" y="4" width="12" height="8" fill="#000"/>
-                <rect x="3" y="5" width="10" height="6" fill="#000080"/>
-                <text x="8" y="9" text-anchor="middle" fill="#0f0" font-size="5" font-family="Courier">JSON</text>
-            </svg>
-            <span style="font-size: 11px;">JSON Config</span>
+        <div class="desk-icon" onclick="copyToClipboard('{{ .subUrl }}')">
+            <div class="w98-icon icon-folder"></div>
+            <span class="desk-icon-label">Subscription</span>
         </div>
-        <div class="desktop-icon" onclick="window.open('{{ .subClashUrl }}', '_blank')">
-            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
-                <rect x="1" y="3" width="14" height="10" fill="#808080"/>
-                <rect x="2" y="4" width="12" height="8" fill="#000"/>
-                <rect x="3" y="5" width="10" height="6" fill="#800000"/>
-                <text x="8" y="9" text-anchor="middle" fill="#fff" font-size="4" font-family="Courier">CLASH</text>
-            </svg>
-            <span style="font-size: 11px;">Clash Config</span>
+        <div class="desk-icon" onclick="window.open('{{ .subJsonUrl }}','_blank')">
+            <div class="w98-icon icon-notepad"></div>
+            <span class="desk-icon-label">JSON Config</span>
+        </div>
+        <div class="desk-icon" onclick="window.open('{{ .subClashUrl }}','_blank')">
+            <div class="w98-icon icon-shield"></div>
+            <span class="desk-icon-label">Clash Config</span>
         </div>
         {{ if .subSupportUrl }}
-        <div class="desktop-icon" onclick="window.open('{{ .subSupportUrl }}', '_blank')">
-            <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16" style="width: 32px; height: 32px;">
-                <circle cx="8" cy="8" r="6" fill="#ffff00"/>
-                <circle cx="8" cy="8" r="5" fill="#ffff80"/>
-                <text x="8" y="11" text-anchor="middle" fill="#000" font-size="10" font-weight="bold" font-family="Arial">?</text>
-            </svg>
-            <span style="font-size: 11px;">Support</span>
+        <div class="desk-icon" onclick="window.open('{{ .subSupportUrl }}','_blank')">
+            <div class="w98-icon icon-help"></div>
+            <span class="desk-icon-label">Support</span>
         </div>
         {{ end }}
     </div>
 
-    <!-- Main Window -->
-    <div class="win98-window crt-effect">
-        <!-- Title Bar -->
+    <!-- ═══ Main Window ═══ -->
+    <div class="win98-window crt">
         <div class="title-bar">
             <span class="title-bar-text">
-                <svg class="title-bar-icon pixel-icon" viewBox="0 0 16 16">
-                    <rect x="1" y="1" width="14" height="14" fill="#000080"/>
-                    <rect x="2" y="2" width="12" height="12" fill="#0000aa"/>
-                    <path d="M4 8 L8 4 L12 8 L8 12 Z" fill="#fff"/>
-                </svg>
+                <div class="w98-icon w98-icon-16 icon-globe"></div>
                 {{ .subTitle }} - Network Status
             </span>
             <div class="title-bar-controls">
                 <button title="Minimize">_</button>
-                <button title="Maximize">□</button>
-                <button title="Close" onclick="if(confirm('Are you sure you want to disconnect?')) window.close()">X</button>
+                <button title="Maximize">&#9633;</button>
+                <button title="Close" onclick="if(confirm('Disconnect?')) window.close()">X</button>
             </div>
         </div>
 
-        <!-- Menu Bar -->
         <div class="menu-bar">
             <span class="menu-item"><u>F</u>ile</span>
             <span class="menu-item"><u>E</u>dit</span>
@@ -556,243 +638,188 @@
             <span class="menu-item"><u>H</u>elp</span>
         </div>
 
-        <!-- Toolbar -->
         <div class="toolbar">
             <div class="toolbar-btn" onclick="copyToClipboard('{{ .subUrl }}')">
-                <svg viewBox="0 0 16 16" width="16" height="16">
-                    <rect x="3" y="3" width="10" height="10" fill="#c0c0c0" stroke="#000"/>
-                    <rect x="5" y="5" width="6" height="6" fill="#fff"/>
-                </svg>
-                <span>Copy Sub URL</span>
+                <svg viewBox="0 0 16 16" width="16" height="16" style="flex-shrink:0"><rect x="2" y="2" width="12" height="12" fill="#c0c0c0" stroke="#000"/><rect x="4" y="4" width="8" height="8" fill="#fff"/><rect x="2" y="2" width="12" height="12" fill="none" stroke="#fff" stroke-width="1" opacity="0.5"/></svg>
+                <span class="tb-label">Copy URL</span>
             </div>
-            <div class="toolbar-btn" onclick="window.open('{{ .subJsonUrl }}', '_blank')">
-                <svg viewBox="0 0 16 16" width="16" height="16">
-                    <rect x="2" y="2" width="12" height="12" fill="#000080"/>
-                    <text x="8" y="11" text-anchor="middle" fill="#fff" font-size="7" font-weight="bold">{}</text>
-                </svg>
-                <span>JSON</span>
+            <div class="toolbar-btn" onclick="window.open('{{ .subJsonUrl }}','_blank')">
+                <svg viewBox="0 0 16 16" width="16" height="16" style="flex-shrink:0"><rect x="1" y="1" width="14" height="14" fill="#000080"/><text x="8" y="12" text-anchor="middle" fill="#fff" font-size="8" font-weight="bold" font-family="monospace">{}</text></svg>
+                <span class="tb-label">JSON</span>
             </div>
-            <div class="toolbar-btn" onclick="window.open('{{ .subClashUrl }}', '_blank')">
-                <svg viewBox="0 0 16 16" width="16" height="16">
-                    <rect x="2" y="2" width="12" height="12" fill="#800000"/>
-                    <text x="8" y="11" text-anchor="middle" fill="#fff" font-size="6" font-weight="bold">C</text>
-                </svg>
-                <span>Clash</span>
+            <div class="toolbar-btn" onclick="window.open('{{ .subClashUrl }}','_blank')">
+                <div class="w98-icon w98-icon-16 icon-shield"></div>
+                <span class="tb-label">Clash</span>
             </div>
         </div>
 
-        <!-- Marquee -->
-        <div class="marquee-container">
-            <span class="marquee-text">
-                *** WELCOME TO {{ .subTitle }} *** 
-                STATUS: {{ if .enabled }}CONNECTED{{ else }}DISCONNECTED{{ end }} *** 
-                REMAINING DATA: {{ .remained }} *** 
-                EXPIRES: {{ if eq .expire 0 }}NEVER{{ else }}{{ .expire }}{{ end }} *** 
-                YOUR ADVENTURE ON THE INFORMATION SUPERHIGHWAY AWAITS! ***
+        <!-- Scrolling ticker -->
+        <div class="marquee-wrap">
+            <span class="marquee-inner">
+                *** WELCOME TO {{ .subTitle }} &nbsp;&nbsp;|&nbsp;&nbsp;
+                STATUS: {{ if .enabled }}ONLINE{{ else }}OFFLINE{{ end }} &nbsp;&nbsp;|&nbsp;&nbsp;
+                REMAINING: {{ .remained }} &nbsp;&nbsp;|&nbsp;&nbsp;
+                EXPIRES: {{ if eq .expire 0 }}NEVER{{ else }}{{ .expire }}{{ end }} &nbsp;&nbsp;|&nbsp;&nbsp;
+                WELCOME TO THE INFORMATION SUPERHIGHWAY ***
             </span>
         </div>
 
-        <!-- Content -->
         <div class="window-content">
             <!-- Connection Status -->
-            <div class="win98-fieldset">
+            <div class="wb">
                 <legend>Connection Status</legend>
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <span class="status-indicator {{ if .enabled }}status-active{{ else }}status-inactive{{ end }}"></span>
-                    <span style="font-weight: bold;">
-                        {{ if .enabled }}
-                            STATUS: CONNECTED - Your modem is ready!
-                        {{ else }}
-                            STATUS: DISCONNECTED - Please check your settings
-                        {{ end }}
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <span class="dot {{ if .enabled }}dot-on{{ else }}dot-off{{ end }}"></span>
+                    <span style="font-weight:bold; font-size:13px;">
+                        {{ if .enabled }}CONNECTED - Your modem is online!{{ else }}DISCONNECTED{{ end }}
                     </span>
                 </div>
-                <div style="font-size: 11px;">
-                    <strong>Subscription ID:</strong> {{ .sId }}
+                <div class="wfield" style="font-size:11px;">
+                    Subscription ID: {{ .sId }}
                 </div>
             </div>
 
             <!-- Traffic Statistics -->
-            <div class="win98-fieldset">
+            <div class="wb">
                 <legend>Traffic Statistics</legend>
-                
+
                 <div class="info-grid">
-                    <span class="info-label">Downloaded:</span>
-                    <span class="info-value">{{ .download }}</span>
-                    
-                    <span class="info-label">Uploaded:</span>
-                    <span class="info-value">{{ .upload }}</span>
-                    
-                    <span class="info-label">Total Used:</span>
-                    <span class="info-value">{{ .used }}</span>
-                    
-                    <span class="info-label">Total Limit:</span>
-                    <span class="info-value">{{ .total }}</span>
-                    
-                    <span class="info-label">Remaining:</span>
-                    <span class="info-value" style="font-weight: bold; color: #000080;">{{ .remained }}</span>
+                    <span class="info-label">Downloaded</span>
+                    <span class="info-val">{{ .download }}</span>
+
+                    <span class="info-label">Uploaded</span>
+                    <span class="info-val">{{ .upload }}</span>
+
+                    <span class="info-label">Total Used</span>
+                    <span class="info-val">{{ .used }}</span>
+
+                    <span class="info-label">Total Limit</span>
+                    <span class="info-val">{{ .total }}</span>
+
+                    <span class="info-label">Remaining</span>
+                    <span class="info-val" style="font-weight:bold; color:var(--win98-blue);">{{ .remained }}</span>
                 </div>
 
-                <!-- Usage Progress Bar -->
-                <div style="margin-top: 15px;">
-                    <div style="margin-bottom: 5px;"><strong>Data Usage:</strong></div>
-                    <div class="progress-container" id="progressContainer">
-                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
-                        <span class="progress-text" id="progressText">0%</span>
+                <div style="margin-top:12px;">
+                    <div style="margin-bottom:4px; font-weight:bold;">Data Usage:</div>
+                    <div class="prog-wrap">
+                        <div class="prog-fill" id="progBar" style="width:0%"></div>
+                        <span class="prog-label" id="progTxt">0%</span>
                     </div>
                     <script>
-                        (function() {
-                            var download = {{ .downloadByte }};
-                            var upload = {{ .uploadByte }};
-                            var total = {{ .totalByte }};
-                            var used = download + upload;
-                            var percent = 0;
-                            if (total > 0) {
-                                percent = Math.min(100, Math.round((used * 100) / total));
-                            }
-                            document.getElementById('progressBar').style.width = percent + '%';
-                            document.getElementById('progressText').textContent = percent + '%';
-                        })();
+                    (function(){
+                        var d={{ .downloadByte }}, u={{ .uploadByte }}, t={{ .totalByte }};
+                        var p = t > 0 ? Math.min(100, Math.round(((d+u)*100)/t)) : 0;
+                        document.getElementById('progBar').style.width = p+'%';
+                        document.getElementById('progTxt').textContent = p+'%';
+                    })();
                     </script>
                 </div>
             </div>
 
             <!-- Account Information -->
-            <div class="win98-fieldset">
+            <div class="wb">
                 <legend>Account Information</legend>
                 <div class="info-grid">
-                    <span class="info-label">Expires:</span>
-                    <span class="info-value">
-                        {{ if eq .expire 0 }}
-                            NEVER (Unlimited Time!)
-                        {{ else }}
-                            {{ .expire }}
-                        {{ end }}
+                    <span class="info-label">Expires</span>
+                    <span class="info-val">
+                        {{ if eq .expire 0 }}NEVER{{ else }}{{ .expire }}{{ end }}
                     </span>
-                    
-                    <span class="info-label">Last Online:</span>
-                    <span class="info-value">
-                        {{ if eq .lastOnline 0 }}
-                            NEVER (First Connection?)
-                        {{ else }}
-                            {{ .lastOnline }}
-                        {{ end }}
+
+                    <span class="info-label">Last Online</span>
+                    <span class="info-val">
+                        {{ if eq .lastOnline 0 }}NEVER{{ else }}{{ .lastOnline }}{{ end }}
                     </span>
-                    
+
                     {{ if .emails }}
-                    <span class="info-label">Email:</span>
-                    <span class="info-value">{{ index .emails 0 }}</span>
+                    <span class="info-label">Email</span>
+                    <span class="info-val">{{ index .emails 0 }}</span>
                     {{ end }}
                 </div>
             </div>
 
             <!-- Subscription Links -->
-            <div class="win98-fieldset">
+            <div class="wb">
                 <legend>Subscription Links</legend>
-                
-                <div style="margin-bottom: 10px;">
-                    <button class="win98-button" onclick="copyToClipboard('{{ .subUrl }}')">
-                        📋 Copy Subscription URL
-                    </button>
-                </div>
 
-                <div style="margin-bottom: 15px;">
-                    <strong>Available Configurations:</strong>
+                <div style="margin-bottom:10px;">
+                    <button class="wbtn" onclick="copyToClipboard('{{ .subUrl }}')">
+                        Copy Subscription URL
+                    </button>
                 </div>
 
                 {{ if .links }}
                     {{ range .links }}
-                    <div class="link-item" onclick="copyToClipboard('{{ . }}')">
-                        <svg class="link-icon pixel-icon" viewBox="0 0 32 32">
-                            <rect x="2" y="2" width="28" height="28" fill="#000080"/>
-                            <rect x="4" y="4" width="24" height="24" fill="#0000aa"/>
-                            <path d="M8 16 L16 8 L24 16 L16 24 Z" fill="#fff"/>
-                            <circle cx="16" cy="16" r="3" fill="#000080"/>
-                        </svg>
-                        <div style="overflow: hidden; text-overflow: ellipsis;">
-                            <div style="font-weight: bold; margin-bottom: 3px;">Click to Copy</div>
-                            <div style="color: #666; font-size: 10px; word-break: break-all;">{{ . }}</div>
+                    <div class="link-card" onclick="copyToClipboard('{{ . }}')">
+                        <div class="w98-icon icon-globe" style="width:28px;height:28px;background-size:28px 28px;"></div>
+                        <div class="link-text">
+                            <div class="link-title">Click to copy configuration</div>
+                            <div class="link-url">{{ . }}</div>
                         </div>
                     </div>
                     {{ end }}
                 {{ else }}
-                    <div style="padding: 20px; text-align: center; background: #fff; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080;">
-                        <svg viewBox="0 0 32 32" width="32" height="32" style="margin: 0 auto 10px;">
-                            <circle cx="16" cy="16" r="14" fill="#ffff00"/>
-                            <circle cx="16" cy="16" r="13" fill="#ffff80"/>
-                            <text x="16" y="22" text-anchor="middle" fill="#000" font-size="18" font-weight="bold">!</text>
-                        </svg>
-                        <div>No configurations available</div>
+                    <div class="wfield" style="text-align:center; padding:20px;">
+                        <div class="w98-icon icon-help" style="margin:0 auto 8px;"></div>
+                        No configurations available
                     </div>
                 {{ end }}
             </div>
 
             <!-- Quick Actions -->
-            <div class="win98-fieldset">
+            <div class="wb">
                 <legend>Quick Actions</legend>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    <button class="win98-button" onclick="copyToClipboard('{{ .subUrl }}')">
-                        📋 Copy Sub URL
+                <div class="btn-grid">
+                    <button class="wbtn" onclick="copyToClipboard('{{ .subUrl }}')">
+                        Copy Sub URL
                     </button>
-                    <button class="win98-button" onclick="window.open('{{ .subJsonUrl }}', '_blank')">
-                        📄 Download JSON
+                    <button class="wbtn" onclick="window.open('{{ .subJsonUrl }}','_blank')">
+                        Download JSON
                     </button>
-                    <button class="win98-button" onclick="window.open('{{ .subClashUrl }}', '_blank')">
-                        ⚔️ Download Clash
+                    <button class="wbtn" onclick="window.open('{{ .subClashUrl }}','_blank')">
+                        Download Clash
                     </button>
                     {{ if .subSupportUrl }}
-                    <button class="win98-button" onclick="window.open('{{ .subSupportUrl }}', '_blank')">
-                        ❓ Get Support
+                    <button class="wbtn" onclick="window.open('{{ .subSupportUrl }}','_blank')">
+                        Get Support
                     </button>
                     {{ end }}
                 </div>
             </div>
         </div>
 
-        <!-- Status Bar -->
-        <div class="status-bar" style="display: flex; flex-wrap: wrap;">
-            <span class="status-bar-section" style="flex: 1; min-width: 150px;">
-                {{ if .enabled }}✓ Connected{{ else }}✗ Disconnected{{ end }}
-            </span>
-            <span class="status-bar-section" style="flex: 1; min-width: 120px;">
-                Data: {{ .remained }} left
-            </span>
-            <span class="status-bar-section" style="flex: 1; min-width: 100px;">
-                {{ .datepicker }}
-            </span>
+        <div class="status-bar">
+            <span class="status-section">{{ if .enabled }}Connected{{ else }}Disconnected{{ end }}</span>
+            <span class="status-section">{{ .remained }} left</span>
+            <span class="status-section">{{ .datepicker }}</span>
         </div>
     </div>
 
-    <!-- About Dialog -->
-    <div class="modal-overlay" id="aboutModal">
-        <div class="modal">
+    <!-- ═══ About Dialog ═══ -->
+    <div class="modal-bg" id="aboutModal">
+        <div class="modal-box">
             <div class="title-bar">
                 <span class="title-bar-text">
-                    <svg class="title-bar-icon" viewBox="0 0 16 16" width="16" height="16">
-                        <circle cx="8" cy="8" r="7" fill="#000080"/>
-                        <text x="8" y="12" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">i</text>
-                    </svg>
+                    <div class="w98-icon w98-icon-16 icon-help"></div>
                     About
                 </span>
                 <div class="title-bar-controls">
                     <button onclick="hideAbout()">X</button>
                 </div>
             </div>
-            <div class="modal-content">
-                <svg viewBox="0 0 64 64" width="64" height="64" style="margin: 0 auto 15px;">
-                    <rect x="4" y="4" width="56" height="56" fill="#000080" rx="4"/>
-                    <rect x="8" y="8" width="48" height="48" fill="#0000aa" rx="2"/>
-                    <path d="M16 32 L32 16 L48 32 L32 48 Z" fill="#fff"/>
-                    <circle cx="32" cy="32" r="8" fill="#000080"/>
-                    <circle cx="32" cy="32" r="4" fill="#fff"/>
-                </svg>
-                <h3 style="margin-bottom: 10px;">{{ .subTitle }}</h3>
-                <p style="margin-bottom: 5px;">Windows 98 Network Status</p>
-                <p style="margin-bottom: 15px; color: #666;">Version 4.10.1998</p>
-                <p style="font-size: 10px; color: #888; margin-bottom: 15px;">
+            <div class="modal-body">
+                <div class="w98-icon icon-windows" style="width:48px;height:48px;background-size:48px 48px;margin:0 auto 12px;"></div>
+                <div style="font-size:16px; font-weight:bold; margin-bottom:4px;">Windows 98</div>
+                <div style="font-size:11px; margin-bottom:12px;">Network Connection Status v4.10.1998</div>
+                <div class="wfield" style="margin-bottom:16px; font-size:11px; text-align:left; padding:8px;">
+                    <strong>{{ .subTitle }}</strong><br>
+                    Subscription: {{ .sId }}<br>
+                    Status: {{ if .enabled }}Online{{ else }}Offline{{ end }}
+                </div>
+                <div style="font-size:10px; color:#888; margin-bottom:14px; font-style:italic;">
                     "Where do you want to go today?"
-                </p>
-                <button class="win98-button" onclick="hideAbout()">OK</button>
+                </div>
+                <button class="wbtn" onclick="hideAbout()" style="min-width:100px;">OK</button>
             </div>
         </div>
     </div>
@@ -800,121 +827,71 @@
     <script>
         function copyToClipboard(text) {
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showNotification('Copied to clipboard!');
-                });
+                navigator.clipboard.writeText(text).then(function() { toast('Copied to clipboard!'); });
             } else {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
                 document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showNotification('Copied to clipboard!');
+                document.body.removeChild(ta);
+                toast('Copied to clipboard!');
             }
         }
 
-        function showNotification(message) {
-            const notif = document.createElement('div');
-            notif.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: #c0c0c0;
-                border: 2px solid;
-                border-color: #ffffff #808080 #808080 #ffffff;
-                padding: 15px 20px;
-                z-index: 2000;
-                box-shadow: 2px 2px 0 #000;
-            `;
-            notif.innerHTML = `
-                <div class="title-bar" style="margin: -15px -20px 10px -20px;">
-                    <span class="title-bar-text" style="font-size: 11px;">Notification</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <svg viewBox="0 0 16 16" width="16" height="16">
-                        <circle cx="8" cy="8" r="7" fill="#00ff00"/>
-                        <path d="M4 8 L7 11 L12 5" stroke="#000" stroke-width="2" fill="none"/>
-                    </svg>
-                    ${message}
-                </div>
-            `;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 2000);
+        function toast(msg) {
+            var el = document.createElement('div');
+            el.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;padding:10px 18px;z-index:3000;box-shadow:2px 2px 0 #000;font-size:13px;display:flex;align-items:center;gap:8px;white-space:nowrap;';
+            el.innerHTML = '<svg viewBox="0 0 16 16" width="14" height="14"><circle cx="8" cy="8" r="7" fill="#00cc00"/><path d="M4 8 L7 11 L12 5" stroke="#fff" stroke-width="2" fill="none"/></svg>' + msg;
+            document.body.appendChild(el);
+            setTimeout(function() { el.remove(); }, 1800);
         }
 
-        function showAbout() {
-            document.getElementById('aboutModal').classList.add('active');
-        }
+        function showAbout() { document.getElementById('aboutModal').classList.add('open'); }
+        function hideAbout() { document.getElementById('aboutModal').classList.remove('open'); }
+        document.getElementById('aboutModal').addEventListener('click', function(e) { if (e.target === this) hideAbout(); });
 
-        function hideAbout() {
-            document.getElementById('aboutModal').classList.remove('active');
-        }
-
-        // Close modal on outside click
-        document.getElementById('aboutModal').addEventListener('click', function(e) {
-            if (e.target === this) hideAbout();
-        });
-
-        // Add keyboard shortcut for Easter egg
-        let konamiCode = [];
-        const secretCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-        
+        /* Konami code easter egg */
+        var kc = [], seq = [38,38,40,40,37,39,37,39,66,65];
         document.addEventListener('keydown', function(e) {
-            konamiCode.push(e.keyCode);
-            konamiCode = konamiCode.slice(-10);
-            
-            if (JSON.stringify(konamiCode) === JSON.stringify(secretCode)) {
-                document.body.style.animation = 'none';
-                showNotification('🎮 KONAMI CODE ACTIVATED! +30 LIVES!');
-                // Easter egg: add some flair
-                document.querySelectorAll('.win98-window').forEach(w => {
-                    w.style.transform = 'rotate(2deg)';
-                    setTimeout(() => w.style.transform = '', 500);
+            kc.push(e.keyCode);
+            kc = kc.slice(-10);
+            if (JSON.stringify(kc) === JSON.stringify(seq)) {
+                toast('KONAMI CODE! +30 LIVES!');
+                document.querySelectorAll('.win98-window').forEach(function(w) {
+                    w.style.transform = 'rotate(2deg) scale(1.02)';
+                    setTimeout(function() { w.style.transform = ''; }, 600);
                 });
             }
         });
 
-        // Classic Windows startup sound simulation (visual)
+        /* Boot screen */
         window.addEventListener('load', function() {
-            const bootScreen = document.createElement('div');
-            bootScreen.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: #000;
-                z-index: 9999;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                color: #fff;
-                font-family: 'MS Sans Serif', sans-serif;
-            `;
-            bootScreen.innerHTML = `
-                <div style="text-align: center;">
-                    <div style="font-size: 24px; margin-bottom: 20px; color: #0000ff;">Windows 98</div>
-                    <div style="font-size: 12px; margin-bottom: 30px;">Microsoft Internet Explorer</div>
-                    <div style="width: 200px; height: 16px; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080;">
-                        <div style="height: 100%; background: repeating-linear-gradient(90deg, #000080 0px, #000080 10px, #000 10px, #000 11px); width: 0%; animation: boot 2s forwards;"></div>
-                    </div>
-                    <div style="margin-top: 10px; font-size: 10px;">Loading network connections...</div>
-                </div>
-            `;
-            document.body.appendChild(bootScreen);
-            
-            // Add boot animation
-            const style = document.createElement('style');
-            style.textContent = '@keyframes boot { to { width: 100%; } }';
-            document.head.appendChild(style);
-            
-            setTimeout(() => {
-                bootScreen.style.opacity = '0';
-                bootScreen.style.transition = 'opacity 0.5s';
-                setTimeout(() => bootScreen.remove(), 500);
-            }, 2000);
+            var s = document.createElement('div');
+            s.style.cssText = 'position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;font-family:var(--font-main);';
+            s.innerHTML = '<div style="text-align:center;">' +
+                '<div style="display:flex;gap:6px;justify-content:center;margin-bottom:24px;">' +
+                '<div style="width:14px;height:14px;background:#ff0000;transform:skewX(-8deg);"></div>' +
+                '<div style="width:14px;height:14px;background:#00aa00;transform:skewX(-8deg);"></div>' +
+                '<div style="width:14px;height:14px;background:#0000ff;transform:skewX(-8deg);"></div>' +
+                '<div style="width:14px;height:14px;background:#ffff00;transform:skewX(-8deg);"></div>' +
+                '</div>' +
+                '<div style="font-size:28px;font-weight:bold;margin-bottom:6px;letter-spacing:1px;">Windows 98</div>' +
+                '<div style="font-size:11px;color:#aaa;margin-bottom:30px;">Microsoft Internet Explorer</div>' +
+                '<div style="width:220px;height:18px;border:2px solid;border-color:#808080 #fff #fff #808080;overflow:hidden;">' +
+                '<div style="height:100%;background:repeating-linear-gradient(90deg,#000080 0px,#000080 10px,#000 10px,#000 11px);width:0%;animation:bootbar 2s forwards;"></div></div>' +
+                '<div style="margin-top:12px;font-size:10px;color:#888;">Loading network connections...</div></div>';
+            document.body.appendChild(s);
+            var st = document.createElement('style');
+            st.textContent = '@keyframes bootbar{to{width:100%}}';
+            document.head.appendChild(st);
+            setTimeout(function() {
+                s.style.transition = 'opacity 0.4s';
+                s.style.opacity = '0';
+                setTimeout(function() { s.remove(); }, 400);
+            }, 2200);
         });
     </script>
 </body>
